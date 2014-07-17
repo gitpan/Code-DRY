@@ -1,0 +1,6 @@
+Revision history for Perl extension Code::DRY.
+
+0.01  Sun Jun 29 18:35:28 2014
+	- original version; created by h2xs 1.23 with options
+		-A -n Code::DRY
+          first working prototype lacking a lot features yet.
