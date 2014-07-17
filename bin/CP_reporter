@@ -4,7 +4,7 @@ use warnings;
 
 use Getopt::Long;
 use Term::ANSIColor ':constants';
-use CPD;
+use Code::DRY;
 
 local $Term::ANSIColor::AUTORESET = 1;
 
@@ -21,7 +21,7 @@ if ($IGNORE eq '') {
 	$IGNORE = '/\A(?:^\s*(?:\#.*)?$)*\z/';
 }
 
-CPD::set_reporter(
+Code::DRY::set_reporter(
     sub {
         my ( $minlength, $units, $rDups ) = @_;
 
@@ -55,9 +55,9 @@ CPD::set_reporter(
             if ( $units eq 'bytes' ) {
 
                 # begin at start of line
-                my $linenumber      = CPD::offset2line( $dup->[6] );
-                my $fileindex       = CPD::offset2fileindex( $dup->[6] );
-                my $file_lineoffset = $CPD::file_lineoffsets[$fileindex];
+                my $linenumber      = Code::DRY::offset2line( $dup->[6] );
+                my $fileindex       = Code::DRY::offset2fileindex( $dup->[6] );
+                my $file_lineoffset = $Code::DRY::file_lineoffsets[$fileindex];
                 my $offsetLineBegin
                     = $linenumber <= 1
                     ? $dup->[1]
@@ -66,13 +66,13 @@ CPD::set_reporter(
                     = $dup->[1]
                     + $file_lineoffset->[ $dup->[3]
                     + ( $dup->[5] == $dup->[7] ? 0 : 1 ) ];
-                print RED CPD::get_concatenated_text( $offsetLineBegin,
+                print RED Code::DRY::get_concatenated_text( $offsetLineBegin,
                     $dup->[6] - $offsetLineBegin );
             }
-            print YELLOW CPD::get_concatenated_text( $dup->[4],
+            print YELLOW Code::DRY::get_concatenated_text( $dup->[4],
                 $dup->[5] - $dup->[4] + 1 );
             if ( $units eq 'bytes' ) {
-                print RED CPD::get_concatenated_text( $dup->[7] + 1,
+                print RED Code::DRY::get_concatenated_text( $dup->[7] + 1,
                     $offsetLineEnd - $dup->[7] );
             }
 
@@ -85,7 +85,7 @@ CPD::set_reporter(
     }
 );
 
-CPD::scan_directories( $minimum, $IGNORE, '\.pm$|\.pl$|\.t$',
+Code::DRY::scan_directories( $minimum, $IGNORE, '\.pm$|\.pl$|\.t$',
     '\.swp$|~$|\.bak$', $dir );
 
 __END__
@@ -98,7 +98,7 @@ CP_reporter [options] path1 path2 ...
 
 =head1 DESCRIPTION
 
-CPD_reporter reads the specified files and analyses the content for
+CP_reporter reads the specified files and analyses the content for
 repeated substrings as they might occur when copying and pasting code.
 
 When a duplication is found, the position and range is reported for 
