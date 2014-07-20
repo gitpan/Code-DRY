@@ -78,8 +78,9 @@ subtest 'check the clearData function' => sub {
 	plan tests => 5;
 
 	Code::DRY::clearData();
-	is(Code::DRY::get_offset_at(0), ~0 >> 32, 'suffix array should have been cleared in after calling clearData()');
-	is(Code::DRY::get_len_at(0), ~0 >> 32, 'longest common prefix array should have been cleared in after calling clearData()');
+
+	is(Code::DRY::get_offset_at(0), 0xffffffff, 'suffix array should have been cleared in after calling clearData()');
+	is(Code::DRY::get_len_at(0), 0xffffffff, 'longest common prefix array should have been cleared in after calling clearData()');
 	is(Code::DRY::get_size(), 0, "size of data should be 0 after calling clearData()");
 	is(scalar @Code::DRY::fileoffsets, 0, "file offsets should be empty after calling clearData()");
 	is(scalar @Code::DRY::file_lineoffsets, 0, "line offsets should be empty after calling clearData()");

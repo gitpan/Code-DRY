@@ -107,6 +107,9 @@ CODE:
   if (!LCP) {
     free(LCP);
   }
+  if (!ISA) {
+    free(ISA);
+  }
 
   size = sv_len(in);
   T = SvPV_nolen(in);
@@ -142,7 +145,8 @@ CODE:
   if (sais(T, (int *)SA, (int *)LCP, (int)n) != 0) {
     free(SA);
     free(LCP);
-    SA = LCP = 0;
+    free(ISA);
+    SA = LCP = ISA = 0;
     n = 0;
 
     RETVAL = -3;
@@ -369,7 +373,7 @@ get_offset_at(index)
    unsigned index;
 INIT:
 CODE:
-  if (index >= n) {
+  if (!n || index >= n) {
     RETVAL = ~0U;
   } else {
     RETVAL = SA[index];
@@ -382,7 +386,7 @@ get_isa_at(index)
    unsigned index;
 INIT:
 CODE:
-  if (index >= n) {
+  if (!n || index >= n) {
     RETVAL = ~0U;
   } else {
     RETVAL = ISA[index];
@@ -395,7 +399,7 @@ get_len_at(index)
    unsigned int index;
 INIT:
 CODE:
-  if (index >= n) {
+  if (!n || index >= n) {
     RETVAL = ~0U;
   } else {
     RETVAL = LCP[index];
@@ -415,5 +419,6 @@ __free_all()
 CODE:
   free(SA);
   free(LCP);
+  free(ISA);
   n = 0;
 

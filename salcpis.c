@@ -341,6 +341,9 @@ static void induceSAandLCP(const void *T, sais_index_type *SA,
   SA[bb++] = (chr(j - 1) < c1) ? ~j : j; // put last character $ into its bucket
                         // negative values mean "don't induce from here anymore"
 
+  // in case LCP[0], which is always 0, hadn't been set yet
+  LCP[0] = 0;
+
   // Variant 3: stack
   if ((TranslateSigma = SAIS_MYMALLOC(k, sais_index_type)) == NULL) { exit(-1); }
   for (i = 0; i < k; ++i)  {   // calculate effective alphabet size
@@ -793,7 +796,12 @@ static sais_index_type sais_main(const void *T, sais_index_type *SA,
 	  if(--i < 0) break;
 	  newfs = LCP[i]; p = SA[i];
 	} while((c1 = chr(p)) == c0);
-	assert(LCP[j]==0); // first S*-suffix in bucket must have LCP-value 0
+	//assert(LCP[j]==0); // first S*-suffix in bucket must have LCP-value 0
+#ifndef NDEBUG
+	if (LCP[j]!=0) { // first S*-suffix in bucket must have LCP-value 0
+fprintf(stderr, "\n\nassert in line 794: LCP@%u == %u != 0\n\n\n", j, LCP[j]);
+	}
+#endif
 	LCP[j] = -1;       // mark first S*-suffix in every bucket
       } while(0 <= i);
       while(0 < j) {
@@ -831,6 +839,9 @@ int
 sais(const unsigned char *T, int *SA, int* LCP, int n) {
   if((T == NULL) || (SA == NULL) || (LCP == NULL) || (n < 0)) { return -1; }
   if(n <= 1) { if(n == 1) { SA[0] = 0; LCP[0] = 0; } return 0; }
+#ifndef NDEBUG
+  memset(LCP, 0x01, n*sizeof(int));
+#endif
   return sais_main(T, SA, LCP, 0, n, UCHAR_SIZE, sizeof(unsigned char), 0,1);
 }
 
